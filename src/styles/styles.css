@@ -1,0 +1,41 @@
+body {
+    font-family: Arial, sans-serif;
+  }
+  
+  .loading-screen, .set-timer, .analog-timer, .digital-timer, .alarm-view {
+    text-align: center;
+    margin-top: 100px;
+  }
+  
+  .clock {
+    width: 200px;
+    height: 200px;
+    border: 10px solid #000;
+    border-radius: 50%;
+    position: relative;
+    margin: 0 auto;
+  }
+  
+  .hand {
+    position: absolute;
+    width: 50%;
+    height: 6px;
+    background: black;
+    top: 50%;
+    transform-origin: 100%;
+  }
+  
+  .minute {
+    height: 4px;
+  }
+  
+  .second {
+    background: red;
+  }
+  
+  button {
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 16px;
+  }
+  

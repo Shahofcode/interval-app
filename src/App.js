@@ -1,23 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import LoadingScreen from './components/LoadingScreen';
+import SetTimer from './components/SetTimer';
+import AnalogTimer from './components/AnalogTimer';
+import DigitalTimer from './components/DigitalTimer';
+import AlarmView from './components/AlarmView';
+import './styles/styles.css';  // Importera stilar
 
 function App() {
+  const [view, setView] = useState('loading');
+  const [timerDuration, setTimerDuration] = useState(0);
+  const [timeUp, setTimeUp] = useState(false);
+
+  const handleStartTimer = (minutes) => {
+    setTimerDuration(minutes);
+    setView('analog');
+  };
+
+  const handleTimeUp = () => {
+    setTimeUp(true);
+    setView('alarm');
+  };
+
+  const handleMenuChange = (newView) => {
+    setView(newView);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {view === 'loading' && <LoadingScreen setView={setView} />}
+      {view === 'set' && <SetTimer onStartTimer={handleStartTimer} />}
+      {view === 'analog' && (
+        <AnalogTimer
+          duration={timerDuration}
+          onTimeUp={handleTimeUp}
+          onMenuChange={handleMenuChange}
+        />
+      )}
+      {view === 'digital' && (
+        <DigitalTimer
+          duration={timerDuration}
+          onTimeUp={handleTimeUp}
+          onMenuChange={handleMenuChange}
+        />
+      )}
+      {view === 'alarm' && <AlarmView onReset={() => setView('set')} />}
     </div>
   );
 }

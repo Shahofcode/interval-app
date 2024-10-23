@@ -4,7 +4,7 @@ import SetTimer from './components/SetTimer';
 import AnalogTimer from './components/AnalogTimer';
 import DigitalTimer from './components/DigitalTimer';
 import AlarmView from './components/AlarmView';
-import './styles/styles.css';  // Importera stilar
+import './styles/styles.css';  
 
 function App() {
   const [view, setView] = useState('loading');
@@ -13,7 +13,7 @@ function App() {
 
   const handleStartTimer = (minutes) => {
     setTimerDuration(minutes);
-    setView('analog');
+    setView('analog');  // Byt till analog timer när timern startar
   };
 
   const handleTimeUp = () => {
@@ -22,13 +22,13 @@ function App() {
   };
 
   const handleMenuChange = (newView) => {
-    setView(newView);
+    setView(newView);  // Hantera vyväxling från menyn
   };
 
   return (
     <div className="App">
       {view === 'loading' && <LoadingScreen setView={setView} />}
-      {view === 'set' && <SetTimer onStartTimer={handleStartTimer} />}
+      {view === 'set' && <SetTimer onStartTimer={handleStartTimer} onMenuChange={handleMenuChange} />}
       {view === 'analog' && (
         <AnalogTimer
           duration={timerDuration}

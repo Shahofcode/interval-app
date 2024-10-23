@@ -1,18 +1,88 @@
 import React, { useState } from 'react';
+import logoBlack from '../assets/logo-black.svg';
+import logoWhite from '../assets/logo-white.svg';
+import leftArrow from '../assets/left-arrow.svg';
+import rightArrow from '../assets/right-arrow.svg';
 
-const SetTimer = ({ onStartTimer }) => {
+const SetTimer = ({ onStartTimer, onMenuChange }) => {
   const [minutes, setMinutes] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const increaseMinutes = () => {
+    setMinutes((prev) => prev + 1);
+  };
+
+  const decreaseMinutes = () => {
+    if (minutes > 0) {
+      setMinutes((prev) => prev - 1);
+    }
+  };
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
 
   return (
-    <div className="set-timer">
-      <h2>Set Timer</h2>
-      <input
-        type="number"
-        value={minutes}
-        onChange={(e) => setMinutes(Number(e.target.value))}
-        placeholder="Enter minutes"
-      />
-      <button onClick={() => onStartTimer(minutes)}>Start Timer</button>
+    <div className="set-timer-container">
+      {/* Svart logga utanför menyn när menyn är stängd */}
+      {!menuOpen && (
+        <div className="header">
+          <img
+            src={logoBlack}
+            alt="Menu Logo"
+            className="menu-logo"
+            onClick={toggleMenu}
+          />
+        </div>
+      )}
+
+      {/* Huvudinnehåll för att justera minuter och starta timern */}
+      <div className="set-timer">
+        <div className="timer-adjust">
+          <img
+            src={leftArrow}
+            alt="Decrease minutes"
+            className="arrow"
+            onClick={decreaseMinutes}
+          />
+          <span className="minutes-display">{minutes}</span>
+          <img
+            src={rightArrow}
+            alt="Increase minutes"
+            className="arrow"
+            onClick={increaseMinutes}
+          />
+        </div>
+
+         {/* Visa texten bara om minuterna är större än 0 */}
+         {minutes > 0 && (
+          <p className="minute-label">
+            {minutes === 1 ? 'minute' : 'minutes'}
+          </p>
+        )}
+
+        <button className="start-button" onClick={() => onStartTimer(minutes)}>
+          START TIMER
+        </button>
+      </div>
+
+      {/* Hamburgermeny innehåll */}
+      {menuOpen && (
+        <div className="menu-overlay">
+          <div className="header">
+            <img
+              src={logoWhite}
+              alt="Menu Logo"
+              className="menu-logo"
+              onClick={toggleMenu}
+            />
+          </div>
+          <div className="menu-items">
+            <button onClick={() => onMenuChange('analog')}>Analog Timer</button>
+            <button onClick={() => onMenuChange('digital')}>Digital Timer</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

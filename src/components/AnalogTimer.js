@@ -1,31 +1,50 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Timer from 'easytimer.js';
 import logoBlack from '../assets/logo-black.svg';
 import logoWhite from '../assets/logo-white.svg';
+import clockBackground from '../assets/clock.svg';
 
 const AnalogTimer = ({ duration, onTimeUp, onMenuChange }) => {
-  const [time, setTime] = useState({ minutes: duration, seconds: 0 });
+  const timer = useRef(new Timer());
+  const minuteHandRef = useRef(null);
+  const secondHandRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false); // För hamburgermenyn
-  const timer = new Timer();
 
   useEffect(() => {
-    // Startar timern med rätt antal minuter
-    timer.start({ countdown: true, startValues: { minutes: duration } });
+    const currentTimer = timer.current;
+    currentTimer.start({ countdown: true, startValues: { minutes: duration } });
 
-    // Uppdaterar tid för varje sekund
-    timer.addEventListener('secondsUpdated', () => {
-      const { minutes, seconds } = timer.getTimeValues();
-      setTime({ minutes, seconds });
-    });
+    const updateHands = () => {
+      const totalSeconds = duration * 60;
+      const elapsedSeconds = totalSeconds - currentTimer.getTotalTimeValues().seconds;
 
-    // När timern når noll
-    timer.addEventListener('targetAchieved', () => {
+      // Beräkna rotationen för minut- och sekundvisarna
+      const minuteRotationDegrees = (elapsedSeconds / totalSeconds) * 360 - 90;
+      const secondRotationDegrees = (currentTimer.getTimeValues().seconds / 60) * 360 - 90;
+
+      // Uppdatera minutvisaren
+      if (minuteHandRef.current) {
+        minuteHandRef.current.style.transform = `rotate(${minuteRotationDegrees}deg)`;
+        minuteHandRef.current.style.transition = 'transform 1s linear';
+      }
+
+      // Uppdatera sekundvisaren
+      if (secondHandRef.current) {
+        secondHandRef.current.style.transform = `rotate(${secondRotationDegrees}deg)`;
+        secondHandRef.current.style.transition = 'transform 1s linear';
+      }
+    };
+
+    updateHands(); // Initial position update
+    currentTimer.addEventListener('secondsUpdated', updateHands);
+
+    currentTimer.addEventListener('targetAchieved', () => {
       onTimeUp();
     });
 
-    // Avsluta timer när komponenten avmonteras
     return () => {
-      timer.stop();
+      currentTimer.removeEventListener('secondsUpdated', updateHands);
+      currentTimer.stop();
     };
   }, [duration, onTimeUp]);
 
@@ -33,41 +52,57 @@ const AnalogTimer = ({ duration, onTimeUp, onMenuChange }) => {
     setMenuOpen(!menuOpen); // Byt mellan att öppna och stänga menyn
   };
 
-  const handleMenuChange = (newView) => {
-    onMenuChange(newView); // Navigera till ny vy
-    setMenuOpen(false); // Stäng menyn efter navigering
-  };
-
   return (
     <div className="analog-timer-container">
-      {/* Flexbox-rad för rubriken och hamburgermenyn */}
+      {/* Header med rubrik och hamburgermeny */}
       <div className="header">
         <h1>INTERVAL</h1>
         <img
-          src={menuOpen ? logoWhite : logoBlack}  // Vit logga när menyn är öppen
+          src={menuOpen ? logoWhite : logoBlack}  // Byt logga beroende på om menyn är öppen
           alt="Menu Logo"
           className="menu-logo"
           onClick={toggleMenu}
         />
       </div>
 
-      {/* Analog timer klocka */}
-      <div className="analog-timer">
+      {/* Klockans bakgrund och visare */}
+      <div className="clock-wrapper">
+        <img src={clockBackground} alt="Clock background" className="clock-background" />
         <div className="clock">
-          <div className="hand minute" style={{ transform: `rotate(${time.minutes * 6}deg)` }}></div>
-          <div className="hand second" style={{ transform: `rotate(${time.seconds * 6}deg)` }}></div>
+          {/* Minutvisare */}
+          <div
+            ref={minuteHandRef}
+            className="hand minute-hand"
+            style={{ transform: 'rotate(-90deg)' }}
+          ></div>
+          {/* Sekundvisare */}
+          <div
+            ref={secondHandRef}
+            className="hand second-hand"
+            style={{ transform: 'rotate(-90deg)' }}
+          ></div>
         </div>
-        <button className="cancel-button" onClick={() => onMenuChange('set')}>
-          Cancel
-        </button>
       </div>
+
+      {/* Endast Cancel-knappen */}
+      <button className="cancel-button" onClick={() => onMenuChange('set')}>
+        Cancel
+      </button>
 
       {/* Hamburgermeny innehåll */}
       {menuOpen && (
         <div className="menu-overlay">
+          <div className="header">
+            <img
+              src={logoWhite}  // Vit logga när menyn är öppen
+              alt="Menu Logo"
+              className="menu-logo"
+              onClick={toggleMenu}
+            />
+          </div>
           <div className="menu-items">
-            <button onClick={() => handleMenuChange('analog')}>Analog Timer</button>
-            <button onClick={() => handleMenuChange('digital')}>Digital Timer</button>
+            <button onClick={() => onMenuChange('analog')}>Analog Timer</button>
+            <button onClick={() => onMenuChange('digital')}>Digital Timer</button>
           </div>
         </div>
       )}

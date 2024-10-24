@@ -1,55 +1,38 @@
-import React, { useEffect, useState, useRef } from 'react';
-import Timer from 'easytimer.js';
+import React, { useEffect, useRef, useState } from 'react';
 import logoBlack from '../assets/logo-black.svg';
 import logoWhite from '../assets/logo-white.svg';
 import clockBackground from '../assets/clock.svg';
 
-const AnalogTimer = ({ duration, onTimeUp, onMenuChange }) => {
-  const timer = useRef(new Timer());
+const AnalogTimer = ({ time, onTimeUp, onMenuChange, onAbortTimer }) => {
   const minuteHandRef = useRef(null);
   const secondHandRef = useRef(null);
-  const [menuOpen, setMenuOpen] = useState(false); // För hamburgermenyn
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const currentTimer = timer.current;
-    currentTimer.start({ countdown: true, startValues: { minutes: duration } });
+    // Total tid i sekunder från minuter och sekunder
+    const totalSeconds = time.minutes * 60 + time.seconds;
 
-    const updateHands = () => {
-      const totalSeconds = duration * 60;
-      const elapsedSeconds = totalSeconds - currentTimer.getTotalTimeValues().seconds;
+    // Beräkna rotationen för minutvisaren
+    // Minutvisaren ska rotera kontinuerligt, så vi tar hänsyn till både minuter och sekunder
+    const minuteRotationDegrees = ((time.minutes * 60 + time.seconds) / 3600) * 360 - 90;
+    
+    // Sekundvisaren roterar baserat på sekunder
+    const secondRotationDegrees = (time.seconds / 60) * 360 - 90;
 
-      // Beräkna rotationen för minut- och sekundvisarna
-      const minuteRotationDegrees = (elapsedSeconds / totalSeconds) * 360 - 90;
-      const secondRotationDegrees = (currentTimer.getTimeValues().seconds / 60) * 360 - 90;
+    // Uppdatera minutvisaren
+    if (minuteHandRef.current) {
+      minuteHandRef.current.style.transform = `rotate(${minuteRotationDegrees}deg)`;
+    }
 
-      // Uppdatera minutvisaren
-      if (minuteHandRef.current) {
-        minuteHandRef.current.style.transform = `rotate(${minuteRotationDegrees}deg)`;
-        minuteHandRef.current.style.transition = 'transform 1s linear';
-      }
+    // Uppdatera sekundvisaren
+    if (secondHandRef.current) {
+      secondHandRef.current.style.transform = `rotate(${secondRotationDegrees}deg)`;
 
-      // Uppdatera sekundvisaren
-      if (secondHandRef.current) {
-        secondHandRef.current.style.transform = `rotate(${secondRotationDegrees}deg)`;
-        secondHandRef.current.style.transition = 'transform 1s linear';
-      }
-    };
-
-    updateHands(); // Initial position update
-    currentTimer.addEventListener('secondsUpdated', updateHands);
-
-    currentTimer.addEventListener('targetAchieved', () => {
-      onTimeUp();
-    });
-
-    return () => {
-      currentTimer.removeEventListener('secondsUpdated', updateHands);
-      currentTimer.stop();
-    };
-  }, [duration, onTimeUp]);
+    }
+  }, [time]); // Uppdatera varje gång tiden ändras
 
   const toggleMenu = () => {
-    setMenuOpen(!menuOpen); // Byt mellan att öppna och stänga menyn
+    setMenuOpen(!menuOpen);
   };
 
   return (
@@ -58,7 +41,7 @@ const AnalogTimer = ({ duration, onTimeUp, onMenuChange }) => {
       <div className="header">
         <h1>interval</h1>
         <img
-          src={menuOpen ? logoWhite : logoBlack}  // Byt logga beroende på om menyn är öppen
+          src={menuOpen ? logoWhite : logoBlack}
           alt="Menu Logo"
           className="menu-logo"
           onClick={toggleMenu}
@@ -85,7 +68,7 @@ const AnalogTimer = ({ duration, onTimeUp, onMenuChange }) => {
       </div>
 
       {/* Endast Cancel-knappen */}
-      <button className="cancel-button" onClick={() => onMenuChange('set')}>
+      <button className="cancel-button" onClick={onAbortTimer}>
         ABORT TIMER
       </button>
 
@@ -94,15 +77,17 @@ const AnalogTimer = ({ duration, onTimeUp, onMenuChange }) => {
         <div className="menu-overlay">
           <div className="header">
             <img
-              src={logoWhite}  // Vit logga när menyn är öppen
+              src={logoWhite}
               alt="Menu Logo"
               className="menu-logo"
               onClick={toggleMenu}
             />
           </div>
           <div className="menu-items">
-            <button onClick={() => onMenuChange('analog')}>Analog Timer</button>
-            <button onClick={() => onMenuChange('digital')}>Digital Timer</button>
+            <button onClick={() => onMenuChange('analog')}>
+              ANALOG TIMER
+            </button>
+            <button onClick={() => onMenuChange('digital')}>DIGITAL TIMER</button>
           </div>
         </div>
       )}

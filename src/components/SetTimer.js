@@ -54,8 +54,8 @@ const SetTimer = ({ onStartTimer, onMenuChange }) => {
           />
         </div>
 
-         {/* Visa texten bara om minuterna är större än 0 */}
-         {minutes > 0 && (
+        {/* Visa texten bara om minuterna är större än 0 */}
+        {minutes > 0 && (
           <p className="minute-label">
             {minutes === 1 ? 'minute' : 'minutes'}
           </p>
@@ -78,8 +78,13 @@ const SetTimer = ({ onStartTimer, onMenuChange }) => {
             />
           </div>
           <div className="menu-items">
-            <button onClick={() => onMenuChange('analog')}>Analog Timer</button>
-            <button onClick={() => onMenuChange('digital')}>Digital Timer</button>
+            {/* Hantera växling mellan Analog och Digital Timer */}
+            <button onClick={() => { onMenuChange('analog'); toggleMenu(); }}>
+              ANALOG TIMER
+            </button>
+            <button onClick={() => { onMenuChange('digital'); toggleMenu(); }}>
+              DIGITAL TIMER
+            </button>
           </div>
         </div>
       )}

@@ -56,7 +56,7 @@ const AnalogTimer = ({ duration, onTimeUp, onMenuChange }) => {
     <div className="analog-timer-container">
       {/* Header med rubrik och hamburgermeny */}
       <div className="header">
-        <h1>INTERVAL</h1>
+        <h1>interval</h1>
         <img
           src={menuOpen ? logoWhite : logoBlack}  // Byt logga beroende på om menyn är öppen
           alt="Menu Logo"
@@ -86,7 +86,7 @@ const AnalogTimer = ({ duration, onTimeUp, onMenuChange }) => {
 
       {/* Endast Cancel-knappen */}
       <button className="cancel-button" onClick={() => onMenuChange('set')}>
-        Cancel
+        ABORT TIMER
       </button>
 
       {/* Hamburgermeny innehåll */}

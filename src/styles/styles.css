@@ -72,10 +72,14 @@
 
 .header h1 {
   font-size: 32px;
-  font-family: 'Righteous', sans-serif;
   text-align: center;
   margin: 0;
   flex-grow: 1;
+  font-family: PT Sans;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 25.88px;
+  letter-spacing: 0.1em;
 }
 /* Timer-justering med pilar */
 .set-timer {
@@ -194,12 +198,14 @@
 }
   
   .hand {
+    width: 50%; /* Längd på minutvisaren */
+    height: 2px; /* Tjocklek på minutvisaren */
+    background-color: black; /* Färg på minutvisaren */
     position: absolute;
-    width: 50%;
-    height: 4px;
-    background: black;
     top: 50%;
-    transform-origin: 100%; /* Rotationspunkten är längst ner på visaren */
+    left: 50%;
+    transform-origin: 0% 50%; /* Starta rotation från klockans mitt */
+    transform: rotate(-90deg); /* Startposition */
   }
   
 
@@ -226,7 +232,7 @@
     height: 100vh;
   }
   
-  /* H1 för rubriken "INTERVAL" */
+  /* H1 för rubriken "INTERVAL" 
   .analog-timer-container h1  {
     font-family: PT Sans;
     font-size: 20px;
@@ -235,6 +241,7 @@
     letter-spacing: 0.1em;
     
 }
+    */
   
   .analog-timer {
     display: flex;
@@ -243,19 +250,45 @@
     align-items: center;
   }
   
-  .cancel-button {
-    background-color: #000;
-    color: #fff;
-    padding: 10px 20px;
-    font-size: 18px;
-    border: none;
+  .cancel-button  {
+    width: 220px;
+    height: 51px;
+    position: absolute;
+    top: 568px;
     border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-  }
+    border: 1.5px solid #000;
+    font-family: PT Sans;
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+}
+
   
   .cancel-button:hover {
     background-color: #333;
   }
   
+  /* digitalTimer.js */
+.digital-timer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.digital-timer h1 {
+  font-size: 48px;
+  text-align: center;
+  font-family: PT Sans;
+  font-size: 80px;
+  font-weight: 700;
+  line-height: 103.52px;
+}
+.digital-timer-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  position: relative;
+}
 }

@@ -5,10 +5,9 @@ import logoWhite from '../assets/logo-white.svg';
 // DigitalTimer-komponenten visar tiden i digitalt format och hanterar vybyten via hamburgermenyn
 const DigitalTimer = ({ time, onTimeUp, onMenuChange, onAbortTimer }) => {
   const [menuOpen, setMenuOpen] = useState(false);  // Hanterar om hamburgermenyn är öppen eller stängd
-  const timer = useRef(null);  // Om du vill hantera intern timerlogik med referens
+  const timer = useRef(null);  
 
   useEffect(() => {
-    // Här kan du lägga till logik för att hantera timeruppdateringar om det behövs
   }, [time]);  // Uppdateras varje gång time ändras
 
   // Funktion för att öppna/stänga hamburgermenyn
